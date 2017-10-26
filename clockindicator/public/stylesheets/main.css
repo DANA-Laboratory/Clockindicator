@@ -1,0 +1,61 @@
+﻿body {
+    font-family: Tanha;
+    background-color: #252830;
+    direction: rtl;
+}
+canvas {
+    direction: ltr;
+    width: 100%;
+    min-width: 200px;
+    min-height: 150px;
+    height: auto;
+}
+.with-border {
+    color: #cfd2da;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+    padding-top: .1rem;
+    padding-bottom: .5rem;
+    background-color: rgba(86,61,124,.2);
+    border: 2px solid rgba(86,61,124,.9);
+}
+
+.with-border:hover {
+    background-color: rgba(86,61,124,.3);
+    border: 2px solid rgba(86,61,124,.6);
+}
+
+a {
+    color: #00B7FF;
+}
+
+kbd {
+    font-family: WWDigital;
+}
+@font-face {
+    font-family: WWDigital;
+    src: url('/fonts/wwDigital.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: Tanha;
+    src: url('/fonts/Tanha/Tanha.woff') format('woff');
+}
+
+@font-face {
+    font-family: Yekan;
+    src: url('/fonts/BYekan+ Bold.ttf') format('truetype');
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: Yekan;
+    src: url('/fonts/BYekan+.ttf') format('truetype');
+}
+
+/* HACK:  */
+.form-check-input {
+    position: relative;
+    margin-top: .25rem;
+    margin-left: -0.25rem;
+}

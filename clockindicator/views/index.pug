@@ -1,0 +1,68 @@
+﻿extends layout
+
+block content
+  div(ng-controller='ClockIndicatorInputCtrl')
+    .text-center
+        t(style="color:yellowgreen; font-family:WWDigital;") force load WWDigital
+        t ............
+        t(style="color:yellowgreen; font-family:Yekan;") force load Yekan
+    .d-flex.justify-content-around
+      .col-2.with-border
+          .form-group.input-group-sm
+              label(for='actualpi_nameInput') جستجو
+              input#actualvalueInput.form-control(type='Number', placeholder='', ng-model='selectedkey')
+          .form-group.input-group-sm
+              label(for='actualpi_nameInput') نام متغییر
+              input#actualvalueInput.form-control(type='String', placeholder='', ng-model='config[selectedkey].pi_unit')
+          .form-group.input-group-sm
+              label(for='actualpi_unitInput') واحد اندازه گیری
+              input#actualvalueInput.form-control(type='String', placeholder='', ng-model='config[selectedkey].pi_name')
+          .form-group.input-group-sm
+              label(for='actualvalueInput') مقدار تحقق یافته
+              input#actualvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].actual')
+          .form-group.input-group-sm
+              label(for='targetvalueInput') هدف
+              input#targetvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].target')
+          .form-group.input-group-sm
+              label(for='lastvalueInput') تحقق یافته در سال گذشته
+              input#lastvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].lastyear')
+          .form-group.input-group-sm
+              label(for='minvalueInput') حداقل مجاز
+              input#minvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].min')
+          .form-group.input-group-sm
+              label(for='maxvalueInput') حداکثر مجاز
+              input#maxvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].max')
+          .small
+              .form-check
+                  label.form-check-label
+                      input#optionsRadios1.form-check-input(type='radio', name='optionsRadios', ng-model='config[0].howtoshow', value='absolute', checked='')
+                      |         مطلق
+              .form-check
+                  label.form-check-label
+                      input#optionsRadios2.form-check-input(type='radio', name='optionsRadios', ng-model='config[0].howtoshow', value='relativetotarget', checked='')
+                      |         نسبت به پیشبینی
+              .form-check
+                  label.form-check-label
+                      input#optionsRadios3.form-check-input(type='radio', name='optionsRadios', ng-model='config[0].howtoshow', value='relativetolastyear', checked='')
+                      |         نسبت به سال گذشته
+              .form-check
+                  label.form-check-label
+                      input#optionsRadios4.form-check-input(type='radio', name='optionsRadios', ng-model='config[0].howtoshow', value='deviation', checked='')
+                      |         انحراف
+          hr
+          .form-check
+          label.form-check-label
+              input.form-check-input(ng-model='config.drawtarget', type='checkbox')
+              |       نمایش هدف
+          label.form-check-label
+              input.form-check-input(ng-model='config.drawlastyear', type='checkbox')
+              |       نمایش مقدار سال گذشته
+      a.col-6.text-center(ng-controller='ClockIndicatorCtrl', href='#')
+        canvas.chart.chart-doughnut.with-border(id='0', chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
+    .d-flex.justify-content-around
+      a.col-2.text-center(ng-controller='ClockIndicatorCtrl', href='#')
+        canvas.chart.chart-doughnut.with-border(id='1', chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
+      a.col-5.text-center(ng-controller='ClockIndicatorCtrl', href='#')
+        canvas.chart.chart-doughnut.with-border(id='2', chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
+      a.col-4.text-center(ng-controller='ClockIndicatorCtrl', href='#')
+        canvas.chart.chart-doughnut.with-border(id='3', chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
