@@ -1,0 +1,62 @@
+#modalconfig.modal.fade(tabindex='-1', role='dialog', aria-labelledby='configuration form', aria-hidden='true')
+    .modal-dialog(role='document')
+        .modal-content
+            .modal-header
+                h5#exampleModalLongTitle.modal-title 
+                |  تنظیمات
+                button.close(type='button', data-dismiss='modal', aria-label='Close')
+                  span(aria-hidden='true') &times;
+            |       
+            .modal-body
+              .container-fluid
+                .row
+                  .col-md-6
+                    .form-group.input-group-sm
+                        label(for='actualpi_nameInput') نام متغییر
+                        input#actualvalueInput.form-control(type='String', placeholder='', ng-model='config[selectedkey].pi_name')
+                    .form-group.input-group-sm
+                        label(for='actualpi_unitInput') واحد اندازه گیری
+                        input#actualvalueInput.form-control(type='String', placeholder='', ng-model='config[selectedkey].pi_unit')
+                    .form-group.input-group-sm
+                        label(for='actualvalueInput') مقدار تحقق یافته
+                        input#actualvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].actual')
+                    .form-group.input-group-sm
+                        label(for='targetvalueInput') هدف
+                        input#targetvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].target')
+                    .form-group.input-group-sm
+                        label(for='lastvalueInput') تحقق یافته در سال گذشته
+                        input#lastvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].lastyear')
+                  .col-md-6
+                    .form-group.input-group-sm
+                        label(for='minvalueInput') حداقل مجاز
+                        input#minvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].min')
+                    .form-group.input-group-sm
+                        label(for='maxvalueInput') حداکثر مجاز
+                        input#maxvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].max')
+                    hr
+                    .small
+                        .form-check
+                            label.form-check-label
+                                input#optionsRadios1.form-check-input(type='radio', name='optionsRadios', ng-model='config[selectedkey].howtoshow', value='absolute', checked='')
+                                |         مطلق
+                        .form-check
+                            label.form-check-label
+                                input#optionsRadios2.form-check-input(type='radio', name='optionsRadios', ng-model='config[selectedkey].howtoshow', value='relativetotarget', checked='')
+                                |         نسبت به پیشبینی
+                        .form-check
+                            label.form-check-label
+                                input#optionsRadios3.form-check-input(type='radio', name='optionsRadios', ng-model='config[selectedkey].howtoshow', value='relativetolastyear', checked='')
+                                |         نسبت به سال گذشته
+                        .form-check
+                            label.form-check-label
+                                input#optionsRadios4.form-check-input(type='radio', name='optionsRadios', ng-model='config[selectedkey].howtoshow', value='deviation', checked='')
+                                |         انحراف
+                    hr
+                    .small
+                      .form-check
+                      label.form-check-label
+                          input.form-check-input(ng-model='config[selectedkey].drawtarget', type='checkbox')
+                          |       نمایش هدف
+                      label.form-check-label
+                          input.form-check-input(ng-model='config[selectedkey].drawlastyear', type='checkbox')
+                          |       نمایش مقدار سال گذشته

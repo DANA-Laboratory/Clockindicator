@@ -18,6 +18,10 @@ angular.module('ClockIndicator').controller("ClockIndicatorInputCtrl", ['$scope'
       conf.drawlastyear = true;
       conf.drawtarget = true;
     }
+    $scope.clicked = function(i) {
+        $scope.selectedkey = i;
+        $("#modalconfig").modal();
+    }
 }]);
 angular.module('ClockIndicator').controller("ClockIndicatorCtrl", ['$scope', function ($scope) {
     var max;

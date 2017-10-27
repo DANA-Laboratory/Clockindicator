@@ -3,6 +3,12 @@
     background-color: #252830;
     direction: rtl;
 }
+button {
+    font-family: Tanha;
+}
+input {
+    font-family: Yekan;
+}
 canvas {
     direction: ltr;
     width: 100%;
@@ -57,5 +63,5 @@ kbd {
 .form-check-input {
     position: relative;
     margin-top: .25rem;
-    margin-left: -0.25rem;
+    margin-left: -0.15rem;
 }
