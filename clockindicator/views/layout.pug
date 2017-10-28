@@ -2,18 +2,18 @@
 html(ng-app='ClockIndicator')
   head
     // Bootstrap css
-    link(href='/bower_components/bootstrap/dist/css/bootstrap.min.css', rel='stylesheet')
+    link(href='/node_modules/bootstrap/dist/css/bootstrap.min.css', rel='stylesheet')
 
     link(rel='stylesheet', href='/stylesheets/main.css')
     // Bootstrap Core JavaScript
-    script(src='/bower_components/jquery/dist/jquery.min.js')
-    script(src='/bower_components/tether/dist/js/tether.min.js')
-    script(src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
+    script(src='/node_modules/jquery/dist/jquery.min.js')
+    script(src='/node_modules/popper.js/dist/umd/popper.min.js')
+    script(src='/node_modules/bootstrap/dist/js/bootstrap.min.js')
     // Angular
-    script(src='/bower_components/angular/angular.min.js')
+    script(src='/node_modules/angular/angular.min.js')
     // Reference chart.js angular-chart
-    script(src='/bower_components/chart.js/dist/Chart.min.js')
-    script(src='/bower_components/angular-chart.js/dist/angular-chart.min.js')  
+    script(src='/node_modules/chart.js/dist/Chart.min.js')
+    script(src='/node_modules/angular-chart.js/dist/angular-chart.min.js')  
     // Controller
     script(src='/javascripts/clockindicatorctrl.js')
     body
