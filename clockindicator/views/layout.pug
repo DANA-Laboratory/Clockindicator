@@ -2,7 +2,7 @@
 html(ng-app='ClockIndicator')
   head
     // Bootstrap css
-    link(href='/node_modules/bootstrap/dist/css/bootstrap.min.css', rel='stylesheet')
+    link(href='/node_modules/bootstrap/dist/css/bootstrap-rtl.css', rel='stylesheet')
 
     link(rel='stylesheet', href='/stylesheets/main.css')
     // Bootstrap Core JavaScript
@@ -14,6 +14,7 @@ html(ng-app='ClockIndicator')
     // Reference chart.js angular-chart
     script(src='/node_modules/chart.js/dist/Chart.min.js')
     script(src='/node_modules/angular-chart.js/dist/angular-chart.min.js')  
+    script(src='/node_modules/angular-resource/angular-resource.min.js')  
     // Controller
     script(src='/javascripts/clockindicatorctrl.js')
     body

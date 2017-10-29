@@ -1,4 +1,4 @@
-﻿var app = angular.module('ClockIndicator', ['chart.js']);
+﻿var app = angular.module('ClockIndicator', ['chart.js', 'ngResource']);
 angular.module('ClockIndicator').controller("ClockIndicatorInputCtrl", ['$scope', function ($scope) {
     //initial values
     $scope.config = [];
