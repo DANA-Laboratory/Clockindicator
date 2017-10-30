@@ -1,29 +1,25 @@
 ﻿var app = angular.module('ClockIndicator', ['chart.js', 'ngResource']);
-angular.module('ClockIndicator').controller("ClockIndicatorInputCtrl", ['$scope', function ($scope) {
-    //initial values
+app.factory('clockIndicatorResourceService', function ($resource) {
+    return $resource('/clockindicator/:id'); // Note the full endpoint address
+});
+app.controller("ClockIndicatorInputCtrl", ['$scope', 'clockIndicatorResourceService', function ($scope, cirs) {
+    //nothing select to be edit
+    $scope.selectedkey = -1;
     $scope.config = [];
-    $scope.selectedkey = 0;
-    for (i=0;i<10; i++) {
-      $scope.config[i] = {
-          min : 2000,
-          max : 8000,
-          pi_name : "مدت توقف",
-          pi_unit : "روز",
-      };
-      conf = $scope.config[i];
-      conf.actual = (conf.min + conf.max) / 2;
-      conf.target = (conf.actual + conf.max) / 2;
-      conf.lastyear = (conf.actual + conf.min) / 2;
-      conf.howtoshow = 'absolute';//relativetotarget relativetolastyear deviation
-      conf.drawlastyear = true;
-      conf.drawtarget = true;
+    for (i = 0; i < 10; i++) {
+        $scope.config[i] = cirs.get({ id: i });
     }
     $scope.clicked = function(i) {
         $scope.selectedkey = i;
         $("#modalconfig").modal();
     }
+    $('#modalconfig').on('hidden.bs.modal', function (e) {
+        $scope.selectedkey = -1;
+        console.log('edit finished');
+        //now update resource if need
+    })
 }]);
-angular.module('ClockIndicator').controller("ClockIndicatorCtrl", ['$scope', function ($scope) {
+app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService', function ($scope, cirs) {
     var max;
     var min;
     var actual;
@@ -75,11 +71,13 @@ angular.module('ClockIndicator').controller("ClockIndicatorCtrl", ['$scope', fun
     $scope.$watch('config', function (newValue, oldValue, scope) {
         if(oldValue.length>0) {
           for(var i = 0; i<oldValue.length; i++) {
-            if(JSON.stringify(oldValue[i])!==JSON.stringify(newValue[i])) {
-              //chart exists need update
-              if(thischart[i]) {
-                  thischart[i].update();
-              }    
+              if (oldValue[i].id && (JSON.stringify(oldValue[i])!==JSON.stringify(newValue[i]))) {
+                  console.log(JSON.stringify(oldValue[i]), '!==', JSON.stringify(newValue[i]))
+                  cirs.save({ id: newValue[i].id }, newValue[i]);
+                  //chart exists need update
+                  if (thischart[i]) {
+                      thischart[i].update();
+                  }    
             }
           }
         }
