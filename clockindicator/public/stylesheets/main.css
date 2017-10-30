@@ -59,8 +59,6 @@ kbd {
 }
 
 /* HACK:  */
-.form-check-input {
-    position: relative;
-    margin-top: .25rem;
-    margin-left: -0.15rem;
+.modal-header {
+    display: block;
 }
