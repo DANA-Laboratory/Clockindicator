@@ -1,20 +1,20 @@
 ﻿extends layout
 block content
-  div(ng-controller='ClockIndicatorInputCtrl')
+  div(ng-controller='ClockIndicatorInputCtrl', ng-init='load()')
     .text-center
         t(style="color:yellowgreen; font-family:WWDigital;") force load WWDigital
         t ............
         t(style="color:yellowgreen; font-family:Yekan;") force load Yekan
     .row
-      .d-flex.justify-content-start.flex-wrap
-        a.col-sm-6.col-md-3.text-center(ng-controller='ClockIndicatorCtrl', ng-click="clicked(0)")
+      .d-flex.justify-content-start.flex-wrap(ng-controller='ClockIndicatorCtrl')
+        a.col-sm-6.col-md-3.text-center(ng-click="clicked(0)")
           canvas.chart.chart-doughnut.with-border(id='0', chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
-        a.col-sm-6.col-md-3.text-center(ng-controller='ClockIndicatorCtrl', ng-click="clicked(1)")
+        a.col-sm-6.col-md-3.text-center( ng-click="clicked(1)")
           canvas.chart.chart-doughnut.with-border(id='1', chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
-        a.col-sm-6.col-md-3.text-center(ng-controller='ClockIndicatorCtrl', ng-click="clicked(2)")
+        a.col-sm-6.col-md-3.text-center(ng-click="clicked(2)")
           canvas.chart.chart-doughnut.with-border(id='2', chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
-        a.col-sm-6.col-md-3.text-center(ng-controller='ClockIndicatorCtrl', ng-click="clicked(3)")
+        a.col-sm-6.col-md-3.text-center(ng-click="clicked(3)")
           canvas.chart.chart-doughnut.with-border(id='3', chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
-        a.col-sm-6.col-md-3.text-center(ng-controller='ClockIndicatorCtrl', ng-click="clicked(4)")
+        a.col-sm-6.col-md-3.text-center(ng-click="clicked(4)")
           canvas.chart.chart-doughnut.with-border(id='4', chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
     include modalconfig.pug

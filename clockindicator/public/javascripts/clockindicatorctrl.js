@@ -6,20 +6,50 @@ app.controller("ClockIndicatorInputCtrl", ['$scope', 'clockIndicatorResourceServ
     //nothing select to be edit
     $scope.selectedkey = -1;
     $scope.config = [];
-    for (i = 0; i < 10; i++) {
-        $scope.config[i] = cirs.get({ id: i });
+    $scope.thischart = [];
+    $scope.load = function () {
+        var oldvalue = "";
+        var max = 10;
+        for (i = 0; i < 10; i++) {
+            cirs.get({ id: i }, function (variable) {
+                $scope.config[variable.id] = variable;
+                if (($scope.config).length == max) {
+                    $scope.$broadcast('variables_loaded');
+                }
+            });
+        }
     }
     $scope.clicked = function(i) {
         $scope.selectedkey = i;
+        oldvalue = JSON.stringify($scope.config[i]);
         $("#modalconfig").modal();
     }
     $('#modalconfig').on('hidden.bs.modal', function (e) {
-        $scope.selectedkey = -1;
-        console.log('edit finished');
         //now update resource if need
-    })
+        if (JSON.stringify($scope.config[$scope.selectedkey]) !== oldvalue) {
+            cirs.save({ id: $scope.config[$scope.selectedkey].id }, $scope.config[$scope.selectedkey]);
+        }
+        $scope.selectedkey = -1;
+    });
+    $scope.$watch('config', function (newValue, oldValue, scope) {
+        if (($scope.selectedkey >= 0) && oldValue[$scope.selectedkey] != null) {
+            if (JSON.stringify(oldValue[$scope.selectedkey]) !== JSON.stringify(newValue[$scope.selectedkey])) {
+                //chart exists need update
+                if ($scope.thischart[$scope.selectedkey]) {
+                    $scope.thischart[$scope.selectedkey].update();
+                    console.log('update called', $scope.selectedkey);
+                }
+            }
+        }
+    }, true);
+    $scope.$on('variables_loaded', function () {
+        for (var i = 0; i < $scope.thischart.length; i++) {
+            $scope.thischart[i].update();
+        }
+    });
 }]);
-app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService', function ($scope, cirs) {
+app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService', function ($scope) {
+    /*
     var max;
     var min;
     var actual;
@@ -29,23 +59,23 @@ app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService',
     var pi_unit;
     var drawlastyear;
     var drawtarget;
-    var thischart = [];
-    var getConf = function() {
+    */
+    var getConf = function (canvasId) {
         //config have changed, try redraw
-        if(canvasId == null)
-          return;
         var conf = $scope.config[canvasId];
-        max = conf.max;
-        min = conf.min;
-        actual = conf.actual;
-        howtoshow = conf.howtoshow;
-        pi_name = conf.pi_name;
-        pi_unit = conf.pi_unit;
-        lastyear = conf.lastyear;
-        target = conf.target;
-        drawlastyear = conf.drawlastyear;
-        drawtarget = conf.drawtarget;
-        style = "decimal";
+        if(!conf)
+          return -1;
+        var max = conf.max;
+        var min = conf.min;
+        var actual = conf.actual;
+        var howtoshow = conf.howtoshow;
+        var pi_name = conf.pi_name;
+        var pi_unit = conf.pi_unit;
+        var lastyear = conf.lastyear;
+        var target = conf.target;
+        var drawlastyear = conf.drawlastyear;
+        var drawtarget = conf.drawtarget;
+        var style = "decimal";
         if (howtoshow === 'absolute') {
         } else if (howtoshow === 'relativetotarget') {
             actual /= target;
@@ -67,22 +97,8 @@ app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService',
         if (drawtarget) {
 
         }
+        return { max: max, min: min, actual: actual, style: style, howtoshow: howtoshow, pi_name: pi_name, pi_unit: pi_unit, drawlastyear: drawlastyear, drawtarget: drawtarget, target: target, lastyear: lastyear};
     }
-    $scope.$watch('config', function (newValue, oldValue, scope) {
-        if(oldValue.length>0) {
-          for(var i = 0; i<oldValue.length; i++) {
-              if (oldValue[i].id && (JSON.stringify(oldValue[i])!==JSON.stringify(newValue[i]))) {
-                  console.log(JSON.stringify(oldValue[i]), '!==', JSON.stringify(newValue[i]))
-                  cirs.save({ id: newValue[i].id }, newValue[i]);
-                  //chart exists need update
-                  if (thischart[i]) {
-                      thischart[i].update();
-                  }    
-            }
-          }
-        }
-        getConf();
-    }, true);
     var originalDraw = Chart.controllers.doughnut.prototype.draw;
     var calc = function (chart) {
         var ctx = chart.ctx;
@@ -94,30 +110,28 @@ app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService',
         var centery = (top + bottom) / 2 + chart.offsetY;
         var radius = chart.outerRadius;
         var width = chart.outerRadius - chart.innerRadius;
-        //          [ , Huge, ,SSmale]
-        
         var size = [7 + Math.floor(0.75 * width), Math.floor(1.6 * width), 9 + Math.floor(0.5 * width)]; //calc text size
         size[3]=2 + size[2]*0.6;
         return [ctx, left, right, top, bottom, centerx, centery, radius, width, size];
     }
-    var addtext = function (chart) {
+    var addtext = function (chart, conf) {
         [ctx, left, right, top, bottom, centerx, centery, radius, width, size] = calc(chart);
         ctx.fillStyle = "#cfd2da";
         ctx.textAlign = "center";
         ctx.font = size[2] + "px Yekan";
-        ctx.fillText(pi_name , centerx, centery + size[2] * 0.8);
+        ctx.fillText(conf.pi_name , centerx, centery + size[2] * 0.8);
         ctx.font = size[3] + "px Yekan";
-        ctx.fillText(pi_unit, centerx, centery + size[3] + size[2] * 0.8);
+        ctx.fillText(conf.pi_unit, centerx, centery + size[3] + size[2] * 0.8);
         ctx.font = size[1] + "px WWDigital";
-        ctx.fillText(actual.toLocaleString('en-US', { maximumSignificantDigits: 5, useGrouping: true, style: style}), centerx, centery - size[1] * 0.8);
+        ctx.fillText(conf.actual.toLocaleString('en-US', { maximumSignificantDigits: 5, useGrouping: true, style: conf.style}), centerx, centery - size[1] * 0.8);
         ctx.font = size[2] + "px WWDigital";
         ctx.textAlign = "left";
-        ctx.fillText(min.toLocaleString('en-US', {maximumSignificantDigits: 5, useGrouping: true}), left, centery + size[2]);
+        ctx.fillText(conf.min.toLocaleString('en-US', {maximumSignificantDigits: 5, useGrouping: true}), left, centery + size[2]);
         ctx.textAlign = "right";
-        ctx.fillText(max.toLocaleString('en-US', {maximumSignificantDigits: 5, useGrouping: true}), right, centery + size[2]);
+        ctx.fillText(conf.max.toLocaleString('en-US', {maximumSignificantDigits: 5, useGrouping: true}), right, centery + size[2]);
     }
-    var addniddle = function (chart) {
-        if (! isValid())
+    var addniddle = function (chart, conf) {
+        if (!isValid(conf))
             return;
         [ctx, left, right, top, bottom, centerx, centery, radius, width, size] = calc(chart);
         //niddles
@@ -143,7 +157,7 @@ app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService',
         //semi niddles
         var drawasmniddle = function (value, strokeStyle, number_of_lines) {
             var delta = 0.004 * (number_of_lines -1 );
-            teta = Math.PI / (max - min) * (value - min);
+            teta = Math.PI / (conf.max - conf.min) * (value - conf.min);
             ctx.beginPath();
             if (size[0]>30) {
                     ctx.lineWidth = 1.5;
@@ -164,15 +178,15 @@ app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService',
             ctx.fillText(value.toLocaleString('en-US', {minimumSignificantDigits: 3, maximumSignificantDigits: 6, useGrouping: true}), centerx - radius * Math.cos(teta) + size[2], centery - radius * Math.sin(teta) - size[2] * 0.3);
         }
         //last year niddle
-        if (howtoshow === 'absolute' && drawlastyear) {
-            drawasmniddle(lastyear, "GreenYellow", 1);
+        if (conf.howtoshow === 'absolute' && conf.drawlastyear) {
+            drawasmniddle(conf.lastyear, "GreenYellow", 1);
         }
         //target niddle
-        if (howtoshow === 'absolute' && drawtarget) {
-            drawasmniddle(target, "GreenYellow", 2);
+        if (conf.howtoshow === 'absolute' && conf.drawtarget) {
+            drawasmniddle(conf.target, "GreenYellow", 2);
         }
         //actual niddle
-        teta = Math.PI / (max - min) * (actual - min);
+        teta = Math.PI / (conf.max - conf.min) * (conf.actual - conf.min);
         drawaniddle(teta, "GreenYellow");
         //niddle hole
         ctx.beginPath();
@@ -180,9 +194,8 @@ app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService',
         ctx.stroke();
     };
     var firstload = 0;
-    var canvasId = null;
-    var isValid = function() {
-        if (actual>=min && actual<=max) {
+    var isValid = function(conf) {
+        if (conf.actual >= conf.min && conf.actual <= conf.max) {
             return true;
         } else {
             return false;
@@ -190,22 +203,26 @@ app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService',
     }
     Chart.controllers.doughnut.prototype.draw = function (ease) {
         canvasId = this.chart.canvas.id;
-        getConf();
+        if (firstload == 0) {
+            $scope.thischart[canvasId] = this.chart;
+        }
+        var conf = getConf(canvasId);
+        if (conf === -1)
+            return;
         originalDraw.call(this, ease);
         if (this.chart.options.customize) {
             var _this = this
             if (firstload == 0) {
-                thischart[canvasId] = this.chart;
                 setTimeout(function () {
-                    addtext(_this.chart);
+                    addtext(_this.chart, conf);
                     //niddle on front
-                    addniddle(_this.chart);
+                    addniddle(_this.chart, conf);
                     firstload++;
                 }, 200)
             } else {
-                addtext(this.chart);
+                addtext(this.chart, conf);
                 //niddle on front
-                addniddle(this.chart);
+                addniddle(this.chart, conf);
             }
             
         };
@@ -251,5 +268,4 @@ app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService',
         animation: false, //uncomment if you dont like animation, when i turn off anim hard referesh makes text to disappear
 
     };
-
 }]);
