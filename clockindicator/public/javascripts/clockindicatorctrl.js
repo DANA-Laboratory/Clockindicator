@@ -5,8 +5,8 @@ app.factory('clockIndicatorResourceService', function ($resource) {
 app.controller("ClockIndicatorInputCtrl", ['$scope', 'clockIndicatorResourceService', function ($scope, cirs) {
     //nothing select to be edit
     $scope.selectedkey = -1;
-    $scope.config = [];
-    $scope.thischart = [];
+    $scope.config = {};
+    $scope.charts = [];
     $scope.load = function () {
         var oldvalue = "";
         var max = 10;
@@ -35,31 +35,20 @@ app.controller("ClockIndicatorInputCtrl", ['$scope', 'clockIndicatorResourceServ
         if (($scope.selectedkey >= 0) && oldValue[$scope.selectedkey] != null) {
             if (JSON.stringify(oldValue[$scope.selectedkey]) !== JSON.stringify(newValue[$scope.selectedkey])) {
                 //chart exists need update
-                if ($scope.thischart[$scope.selectedkey]) {
-                    $scope.thischart[$scope.selectedkey].update();
+                if ($scope.charts[$scope.selectedkey]) {
+                    $scope.charts[$scope.selectedkey].update();
                     console.log('update called', $scope.selectedkey);
                 }
             }
         }
     }, true);
     $scope.$on('variables_loaded', function () {
-        for (var i = 0; i < $scope.thischart.length; i++) {
-            $scope.thischart[i].update();
+        for (var i = 0; i < $scope.charts.length; i++) {
+            $scope.charts[i].update();
         }
     });
 }]);
 app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService', function ($scope) {
-    /*
-    var max;
-    var min;
-    var actual;
-    var style;
-    var howtoshow;
-    var pi_name;
-    var pi_unit;
-    var drawlastyear;
-    var drawtarget;
-    */
     var getConf = function (canvasId) {
         //config have changed, try redraw
         var conf = $scope.config[canvasId];
@@ -193,7 +182,7 @@ app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService',
         ctx.arc(centerx, centery, ctx.lineWidth*2, 0, 2 * Math.PI);
         ctx.stroke();
     };
-    var firstload = 0;
+    var firstload = {};
     var isValid = function(conf) {
         if (conf.actual >= conf.min && conf.actual <= conf.max) {
             return true;
@@ -203,29 +192,37 @@ app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService',
     }
     Chart.controllers.doughnut.prototype.draw = function (ease) {
         canvasId = this.chart.canvas.id;
-        if (firstload == 0) {
-            $scope.thischart[canvasId] = this.chart;
-        }
-        var conf = getConf(canvasId);
-        if (conf === -1)
-            return;
-        originalDraw.call(this, ease);
-        if (this.chart.options.customize) {
+        if (firstload[canvasId] !== 0) {
+            $scope.charts[canvasId] = this.chart;
+            var _canvasId = canvasId;
             var _this = this
-            if (firstload == 0) {
-                setTimeout(function () {
-                    addtext(_this.chart, conf);
-                    //niddle on front
-                    addniddle(_this.chart, conf);
-                    firstload++;
-                }, 200)
-            } else {
+            setTimeout(function () {
+                var conf = getConf(_canvasId);
+                if (conf == -1) {
+                    console.log('error, cant load conf');
+                    return;
+                }
+                originalDraw.call(this, ease);
+                if (this.chart.options.customize) {
+                        addtext(_this.chart, conf);
+                        //niddle on front
+                        addniddle(_this.chart, conf);
+                        firstload[canvasId] = 0;
+                };
+            }, 200)
+        } else {
+            var conf = getConf(canvasId);
+            if (conf === -1) {
+                console.log('error, cant load conf');
+                return;
+            }
+            originalDraw.call(this, ease);
+            if (this.chart.options.customize) {
                 addtext(this.chart, conf);
                 //niddle on front
                 addniddle(this.chart, conf);
-            }
-            
-        };
+            };
+        }
     };
     $scope.data = [[30, 30, 30]];
     $scope.datasetOverride = [
