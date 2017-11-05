@@ -192,26 +192,28 @@ app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService',
     }
     Chart.controllers.doughnut.prototype.draw = function (ease) {
         canvasId = this.chart.canvas.id;
+        key = this.chart.canvas.attributes['key'].value;
         if (firstload[canvasId] !== 0) {
             $scope.charts[canvasId] = this.chart;
             var _canvasId = canvasId;
+            var _key = key;
             var _this = this
             setTimeout(function () {
-                var conf = getConf(_canvasId);
+                var conf = getConf(_key);
                 if (conf == -1) {
                     console.log('error, cant load conf');
                     return;
                 }
-                originalDraw.call(this, ease);
-                if (this.chart.options.customize) {
+                originalDraw.call(_this, ease);
+                if (_this.chart.options.customize) {
                         addtext(_this.chart, conf);
                         //niddle on front
                         addniddle(_this.chart, conf);
-                        firstload[canvasId] = 0;
+                        firstload[_canvasId] = 0;
                 };
-            }, 200)
+            }, 500)
         } else {
-            var conf = getConf(canvasId);
+            var conf = getConf(key);
             if (conf === -1) {
                 console.log('error, cant load conf');
                 return;

@@ -15,11 +15,11 @@
                         label(for='actualpi_nameInput') نام متغییر
                         input#actualvalueInput.form-control(type='String', placeholder='', ng-model='config[selectedkey].pi_name')
                     .form-group.input-group-sm
-                        label(for='actualpi_unitInput') واحد اندازه گیری
-                        input#actualvalueInput.form-control(type='String', placeholder='', ng-model='config[selectedkey].pi_unit')
-                    .form-group.input-group-sm
                         label(for='actualvalueInput') مقدار تحقق یافته
                         input#actualvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].actual')
+                    .form-group.input-group-sm
+                        label(for='actualpi_unitInput') واحد اندازه گیری
+                        input#actualvalueInput.form-control(type='String', placeholder='', ng-model='config[selectedkey].pi_unit')
                     .form-group.input-group-sm
                         label(for='targetvalueInput') هدف
                         input#targetvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].target')
@@ -27,6 +27,8 @@
                         label(for='lastvalueInput') تحقق یافته در سال گذشته
                         input#lastvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].lastyear')
                   .col-md-6
+                    div(style='background-color:#252830')
+                      canvas.chart.chart-doughnut.with-border(id='5', ng-attr-key='{{selectedkey}}', chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
                     .form-group.input-group-sm
                         label(for='minvalueInput') حداقل مجاز
                         input#minvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].min')
