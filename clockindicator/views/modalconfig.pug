@@ -11,30 +11,8 @@
               .container-fluid
                 .row
                   .col-md-6
-                    .form-group.input-group-sm
-                        label(for='actualpi_nameInput') نام متغییر
-                        input#actualvalueInput.form-control(type='String', placeholder='', ng-model='config[selectedkey].pi_name')
-                    .form-group.input-group-sm
-                        label(for='actualvalueInput') مقدار تحقق یافته
-                        input#actualvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].actual')
-                    .form-group.input-group-sm
-                        label(for='actualpi_unitInput') واحد اندازه گیری
-                        input#actualvalueInput.form-control(type='String', placeholder='', ng-model='config[selectedkey].pi_unit')
-                    .form-group.input-group-sm
-                        label(for='targetvalueInput') هدف
-                        input#targetvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].target')
-                    .form-group.input-group-sm
-                        label(for='lastvalueInput') تحقق یافته در سال گذشته
-                        input#lastvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].lastyear')
-                  .col-md-6
                     div(style='background-color:#252830')
-                      canvas.chart.chart-doughnut.with-border(id='5', ng-attr-key='{{selectedkey}}', chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
-                    .form-group.input-group-sm
-                        label(for='minvalueInput') حداقل مجاز
-                        input#minvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].min')
-                    .form-group.input-group-sm
-                        label(for='maxvalueInput') حداکثر مجاز
-                        input#maxvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].max')
+                      canvas.chart.chart-doughnut.with-border(ng-attr-data-source='{{selectedkey}}', ng-click="clicked($event)", chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
                     hr
                     .small
                         .form-check
@@ -62,3 +40,26 @@
                       label.form-check-label
                           input.form-check-input(ng-model='config[selectedkey].drawlastyear', type='checkbox')
                           |       نمایش مقدار سال گذشته
+                  .col-md-3.small
+                    .form-group.input-group-sm
+                        label(for='actualpi_nameInput') نام متغییر
+                        input#actualvalueInput.form-control(type='String', placeholder='', ng-model='config[selectedkey].pi_name')
+                    .form-group.input-group-sm
+                        label(for='actualpi_unitInput') واحد اندازه گیری
+                        input#actualvalueInput.form-control(type='String', placeholder='', ng-model='config[selectedkey].pi_unit')
+                    .form-group.input-group-sm
+                        label(for='minvalueInput') حداقل مجاز
+                        input#minvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].min')
+                    .form-group.input-group-sm
+                        label(for='maxvalueInput') حداکثر مجاز
+                        input#maxvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].max')
+                  .col-md-3.small
+                    .form-group.input-group-sm
+                        label(for='actualvalueInput') مقدار تحقق یافته
+                        input#actualvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].actual')
+                    .form-group.input-group-sm
+                        label(for='targetvalueInput') هدف
+                        input#targetvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].target')
+                    .form-group.input-group-sm
+                        label(for='lastvalueInput') تحقق یافته در سال گذشته
+                        input#lastvalueInput.form-control(type='Number', placeholder='', ng-model='config[selectedkey].lastyear')

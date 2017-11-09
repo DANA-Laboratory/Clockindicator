@@ -7,14 +7,14 @@ block content
         t(style="color:yellowgreen; font-family:Yekan;") force load Yekan
     .row
       .d-flex.justify-content-start.flex-wrap(ng-controller='ClockIndicatorCtrl')
-        a.col-sm-6.col-md-3.text-center(ng-click="clicked(0)")
-          canvas.chart.chart-doughnut.with-border(id='0', key='0', chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
-        a.col-sm-6.col-md-3.text-center( ng-click="clicked(1)")
-          canvas.chart.chart-doughnut.with-border(id='1', key='1', chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
-        a.col-sm-6.col-md-3.text-center(ng-click="clicked(2)")
-          canvas.chart.chart-doughnut.with-border(id='2', key='2', chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
-        a.col-sm-6.col-md-3.text-center(ng-click="clicked(3)")
-          canvas.chart.chart-doughnut.with-border(id='3', key='3', chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
-        a.col-sm-6.col-md-3.text-center(ng-click="clicked(4)")
-          canvas.chart.chart-doughnut.with-border(id='4', key='4', chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
+        a.col-sm-6.col-md-3.text-center
+          canvas.chart.chart-doughnut.with-border(data-source='0', ng-click="clicked($event)", chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
+        a.col-sm-6.col-md-3.text-center
+          canvas.chart.chart-doughnut.with-border(data-source='1', ng-click="clicked($event)", chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
+        a.col-sm-6.col-md-3.text-center
+          canvas.chart.chart-doughnut.with-border(data-source='2', ng-click="clicked($event)", chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
+        a.col-sm-6.col-md-3.text-center
+          canvas.chart.chart-doughnut.with-border(data-source='3', ng-click="clicked($event)", chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
+        a.col-sm-6.col-md-3.text-center
+          canvas.chart.chart-doughnut.with-border(data-source='4', ng-click="clicked($event)", chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
         include modalconfig.pug

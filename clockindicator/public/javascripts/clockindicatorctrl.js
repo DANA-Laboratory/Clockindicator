@@ -19,10 +19,14 @@ app.controller("ClockIndicatorInputCtrl", ['$scope', 'clockIndicatorResourceServ
             });
         }
     }
-    $scope.clicked = function(i) {
-        $scope.selectedkey = i;
-        oldvalue = JSON.stringify($scope.config[i]);
+    $scope.clicked = function(event) {
+      if(event.currentTarget){
+        $scope.selectedkey = event.currentTarget.attributes["data-source"].value;
+        oldvalue = JSON.stringify($scope.config[$scope.selectedkey]);
         $("#modalconfig").modal();
+      } else {
+        console.log("error, where is evant?");
+      }
     }
     $('#modalconfig').on('hidden.bs.modal', function (e) {
         //now update resource if need
@@ -35,10 +39,20 @@ app.controller("ClockIndicatorInputCtrl", ['$scope', 'clockIndicatorResourceServ
         if (($scope.selectedkey >= 0) && oldValue[$scope.selectedkey] != null) {
             if (JSON.stringify(oldValue[$scope.selectedkey]) !== JSON.stringify(newValue[$scope.selectedkey])) {
                 //chart exists need update
+                for (let ch of $scope.charts) {
+                    if (ch.canvas.attributes['data-source'].value == $scope.selectedkey) {
+                        ch.update();
+                        //console.log('update called', $scope.selectedkey);
+                    } else {
+                        //console.log(ch.canvas.attributes['data-source'].value, " <> ", $scope.selectedkey);
+                    }
+                }
+                /*
                 if ($scope.charts[$scope.selectedkey]) {
                     $scope.charts[$scope.selectedkey].update();
                     console.log('update called', $scope.selectedkey);
                 }
+                */
             }
         }
     }, true);
@@ -182,7 +196,6 @@ app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService',
         ctx.arc(centerx, centery, ctx.lineWidth*2, 0, 2 * Math.PI);
         ctx.stroke();
     };
-    var firstload = {};
     var isValid = function(conf) {
         if (conf.actual >= conf.min && conf.actual <= conf.max) {
             return true;
@@ -191,12 +204,18 @@ app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService',
         }
     }
     Chart.controllers.doughnut.prototype.draw = function (ease) {
-        canvasId = this.chart.canvas.id;
-        key = this.chart.canvas.attributes['key'].value;
-        if (firstload[canvasId] !== 0) {
+        var firstload = true;
+        var canvasId = $scope.charts.indexOf(this.chart);
+        if (canvasId === -1) {
+          canvasId = $scope.charts.length;
+        } else {
+          firstload= false;
+        }
+        var dataSource = this.chart.canvas.attributes['data-source'].value;
+        if (firstload) {
             $scope.charts[canvasId] = this.chart;
             var _canvasId = canvasId;
-            var _key = key;
+            var _key = dataSource;
             var _this = this
             setTimeout(function () {
                 var conf = getConf(_key);
@@ -213,7 +232,7 @@ app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService',
                 };
             }, 500)
         } else {
-            var conf = getConf(key);
+            var conf = getConf(dataSource);
             if (conf === -1) {
                 console.log('error, cant load conf');
                 return;
