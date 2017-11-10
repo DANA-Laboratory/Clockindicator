@@ -16,18 +16,38 @@ canvas {
     min-height: 150px;
     height: auto;
 }
+
 .with-border {
     color: #cfd2da;
     margin-bottom: 1rem;
     padding-top: .1rem;
     padding-bottom: .5rem;
-    background-color: rgba(86,61,124,.2);
-    border: 2px solid rgba(86,61,124,.9);
+    background-color: rgba(var(--rgb), 0.1);
+    border: 2px solid rgba(var(--rgb),.9);
 }
 
 .with-border:hover {
-    background-color: rgba(86,61,124,.3);
-    border: 2px solid rgba(86,61,124,.6);
+    background-color: rgba(var(--rgb), .4);
+    border: 2px solid rgba(var(--rgb), 1));
+}
+
+.Bgray {
+    --rgb: 58,59,63;
+}
+.Bpurple {
+    --rgb: 86,61,124;
+}
+.Bpink {
+    --rgb: 100,60,80;
+}
+.Bred {
+    --rgb: 130,30,50;
+}
+.Bgreen {
+    --rgb: 40,100,50;
+}
+.Bblue {
+    --rgb: 70,70,140;
 }
 
 a {
