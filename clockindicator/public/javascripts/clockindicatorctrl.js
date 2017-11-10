@@ -23,7 +23,14 @@ app.controller("ClockIndicatorInputCtrl", ['$scope', 'clockIndicatorResourceServ
       if(event.currentTarget){
         $scope.selectedkey = event.currentTarget.attributes["data-source"].value;
         oldvalue = JSON.stringify($scope.config[$scope.selectedkey]);
-        $("#modalconfig").modal();
+        setTimeout(function () {
+          for (let ch of $scope.charts) {
+            if (ch.canvas.attributes['data-source'].value == $scope.selectedkey) {
+              ch.update();
+              $("#modalconfig").modal();
+            }
+          }
+        }, 500);
       } else {
         console.log("error, where is evant?");
       }
