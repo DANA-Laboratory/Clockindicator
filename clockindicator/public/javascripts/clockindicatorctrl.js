@@ -70,6 +70,21 @@ app.controller("ClockIndicatorInputCtrl", ['$scope', 'clockIndicatorResourceServ
     });
 }]);
 app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService', function ($scope) {
+    var chartId = 1;
+    var progressChart = {};
+    while (document.getElementById("job" + chartId) !== null) {
+        var key = "job" + chartId;
+        var ctx = document.getElementById(key);
+        progressChart[key] = new Chart(ctx, {
+            type: 'progressIndicator',
+            data: {},
+            options: {},
+        });
+        progressChart[key].drawing(null);
+        chartId++;
+    }
+    console.log(ctx);
+
     var getConf = function (canvasId) {
         //config have changed, try redraw
         var conf = $scope.config[canvasId];
