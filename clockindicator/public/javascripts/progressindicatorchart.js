@@ -20,31 +20,39 @@ Chart.controllers.progressIndicator = Chart.DatasetController.extend({
       var right = chartArea.right;
       var top = chartArea.top;
       var bottom = chartArea.bottom;
-      var W = Math.abs((left-right));
+      var W = Math.abs((left-right))/4;
       var H = Math.abs((top-bottom));
-      ctx.strokeStyle = options.color;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      var r = Math.min(W, H)/2;
-      var r1 = r * 0.9;
-      var r2 = r * 0.7;
-      ctx.arc(W/2, H/2, r1, 0, 2 * Math.PI);
-      ctx.stroke();
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      var teta = Math.asin((100 - data.value)/50-1);
-      ctx.arc(W/2, H/2, r2, teta, Math.PI - teta);
-      ctx.fillStyle = options.fillcolor;
-      ctx.fill();
-      ctx.stroke();
-      ctx.arc(W/2, H/2, r2, Math.PI - teta, teta);
-      ctx.stroke();
-      ctx.fillStyle = options.textcolor;
-      ctx.textAlign = "center";
-      var size = r2/2;
-      var txt = "%" + data.value;
-      ctx.font = size + "px Yekan";
-      ctx.fillText(txt, W/2, H/2 + size/3);
+      for (var i of [0,1,2]) {
+        var centX = W*3/4 + W * i * 5/4;
+        ctx.strokeStyle = options.color[i];
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        var r = Math.min(W, H)/2;
+        var r1 = r * 0.9;
+        var r2 = r * 0.7;
+        ctx.arc(centX, H/2, r1, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        var teta = Math.asin((100 - data.value)/50-1);
+        ctx.arc(centX, H/2, r2, teta, Math.PI - teta);
+        ctx.fillStyle = options.fillcolor[i];
+        ctx.strokeStyle = options.fillcolor[i];
+        ctx.fill();
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(centX, H/2, r2, Math.PI - teta, teta);
+        ctx.fillStyle = options.color[i];
+        ctx.strokeStyle = options.color[i];
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = options.textcolor;
+        ctx.textAlign = "center";
+        var size = r2/2;
+        var txt = "%" + data.value;
+        ctx.font = size + "px Yekan";
+        ctx.fillText(txt, centX, H/2 + size/3);
+      }
     },
 
     // Remove hover styling from the given element

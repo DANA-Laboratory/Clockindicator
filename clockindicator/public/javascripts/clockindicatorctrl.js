@@ -72,41 +72,102 @@ app.controller("ClockIndicatorInputCtrl", ['$scope', 'clockIndicatorResourceServ
 app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService', function ($scope) {
     var chartId = 1;
     var progressChart = {};
+    var isIntersect = function (point, circle) {
+      return Math.sqrt((point.x-circle.x) ** 2 + (point.y - circle.y) ** 2) < circle.r;
+    }
+    var draw = function(c, data, options) {
+      var W = canvas.width;
+      var H = canvas.height;
+      var ctx = c.getContext("2d");
+      for (var i of [0,1,2]) {
+        var centX = W/5 + W * i * 3/10;
+        var r = W/7 * 0.7; 
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        var teta = Math.asin((100 - data.value)/50-1);
+        ctx.arc(centX, H/2, r, teta, Math.PI - teta);
+        ctx.fillStyle = options.fillcolor[i];
+        ctx.strokeStyle = options.fillcolor[i];
+        ctx.fill();
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(centX, H/2, r, Math.PI - teta, teta);
+        ctx.fillStyle = options.color[i];
+        ctx.strokeStyle = options.color[i];
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = options.textcolor;
+        ctx.textAlign = "center";
+        var size = r/2;
+        var txt = "%" + data.value;
+        ctx.font = size + "px Yekan";
+        ctx.fillText(txt, centX, H/2 + size/3);        
+      }
+    }
+    var createCircles = function(c, data, options) {
+      var W = c.width;
+      var H = c.height;
+      var ctx = c.getContext("2d");
+      //console.log(W, H);
+      var circles = [];
+      for (var i of [0,1,2]) {
+        var centX = W/5 + W * i * 3/10;
+        ctx.strokeStyle = options.color[i];
+        ctx.lineWidth = 1;
+        var r = W/7; 
+        circles[i] = {x: centX, y: H/2, r: r, startangle: 0, endangle: 2 * Math.PI, strokeStyle: options.color[i], lineWidth: 2, strokeStyleHover: options.fillcolor[i], hover:false};
+      }
+      return circles;
+    }
+    var drawCircle = function(ctx, circle) {
+        ctx.lineWidth = circle.lineWidth;
+        if(circle.hover) {
+          ctx.strokeStyle = circle.strokeStyleHover;
+        } else {
+          ctx.strokeStyle = circle.strokeStyle;        
+        }
+        ctx.beginPath();
+        ctx.arc(circle.x, circle.y, circle.r, circle.startangle, circle.endangle);
+        ctx.stroke();
+    }
     while (document.getElementById("job" + chartId) !== null) {
         var key = "job" + chartId;
-        var ctx = document.getElementById(key);
-        progressChart[key] = new Chart(ctx, {
-            type: 'progressIndicator',
-            data: {
-                value: 50,
-                labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-                datasets: [{
-                    label: '# of Votes',
-                    data: [12, 19, 3, 5, 2, 3],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255,99,132,1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                color: "GreenYellow",
-                fillcolor: "DarkBlue",
-                textcolor: "GreenYellow",
+        var canvas  = document.getElementById(key);
+        var options = {
+                color: ["rgb(58,59,63)", "rgb(58,59,63)", "rgb(58,59,63)"],
+                fillcolor: ["rgb(70,70,140)", "rgb(100,60,80)", "rgb( 40,100,50)"],
+                textcolor: "#e6e6ff",
+            };
+        var data = {value: 50};
+        progressChart[key] = {canvas: canvas}; 
+        progressChart[key].circles = createCircles(canvas , data, options);
+        progressChart[key].circles.forEach(circle => {
+          drawCircle(canvas.getContext("2d"), circle);
+        });
+        draw(canvas , data, options);
+        canvas.addEventListener('mousemove', (e) => {
+          var canvas = e.currentTarget;
+          const pos = {
+            x: (e.clientX - canvas.getBoundingClientRect().left) * canvas.width/canvas.clientWidth,
+            y: (e.clientY - canvas.getBoundingClientRect().top) * canvas.height/canvas.clientHeight
+          };
+          //console.log(pos);
+          circles = progressChart[e.currentTarget.attributes["id"].value].circles;
+          circles.forEach(circle => {
+            if (isIntersect(pos, circle)) {
+              if(circle.hover != true) {
+                circle.hover = true;
+                drawCircle(canvas.getContext("2d"), circle);
+                console.log("hover on");
+              }
+            } else {
+              if(circle.hover != false) {
+                circle.hover = false;
+                drawCircle(canvas.getContext("2d"), circle);
+                console.log("hover off");
+              }
             }
+          });   
         });
         chartId++;
     }

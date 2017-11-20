@@ -8,13 +8,13 @@ block content
     .row
       .d-flex.justify-content-start.flex-wrap(ng-controller='ClockIndicatorCtrl')
         a.col-sm-6.col-md-3.text-center
-          canvas(id='job1', data-source='0', ng-click="clicked($event)", chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
+          canvas.with-border.Bgray(id='job1', data-source='0', ng-click="clicked($event)", chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
         a.col-sm-6.col-md-3.text-center
-          canvas(id='job2', data-source='1', ng-click="clicked($event)", chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
+          canvas.with-border.Bgray(id='job2', data-source='1', ng-click="clicked($event)", chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
         a.col-sm-6.col-md-3.text-center
-          canvas(id='job3', data-source='2', ng-click="clicked($event)", chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
+          canvas.with-border.Bgray(id='job3', data-source='2', ng-click="clicked($event)", chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
         a.col-sm-6.col-md-3.text-center
-          canvas(id='job4', data-source='3', ng-click="clicked($event)", chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
+          canvas.with-border.Bgray(id='job4', data-source='3', ng-click="clicked($event)", chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
         a.col-sm-6.col-md-3.text-center
-          canvas(id='job5', data-source='4', ng-click="clicked($event)", chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
+          canvas.with-border.Bgray(id='job5', data-source='4', ng-click="clicked($event)", chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
         include modalconfig.pug
