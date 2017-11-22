@@ -69,16 +69,82 @@ app.controller("ClockIndicatorInputCtrl", ['$scope', 'clockIndicatorResourceServ
         }
     });
 }]);
-app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService', function ($scope) {
+app.controller("JobIndicatorCtrl", ['$scope', 'clockIndicatorResourceService', function ($scope) {
     var chartId = 1;
     var progressChart = {};
+    $scope.init = function() {      
+      while (document.getElementById("job" + chartId) !== null) {
+          var key = "job" + chartId;
+          var canvas  = document.getElementById(key);
+          //TODO should move to css
+          var options = {
+                  color: ["rgb(58,59,63)", "rgb(58,59,63)", "rgb(58,59,63)"],
+                  fillcolor: ["rgb(70,70,140)", "rgb(100,60,80)", "rgb( 40,100,50)"],
+                  textcolor: "#e6e6ff",
+              };
+          //TODO get from server
+          var data = {value: 50};
+          progressChart[key] = {canvas: canvas}; 
+          progressChart[key].circles = createCircles(canvas , data, options);
+          progressChart[key].circles.forEach(circle => {
+            drawCircle(canvas.getContext("2d"), circle);
+          });
+          draw(canvas , data, options)
+          canvas.addEventListener('click', (e) => {
+            var c = findelementintersect(progressChart[e.currentTarget.attributes["id"].value].circles, e.currentTarget, e.clientX, e.clientY);
+            if (c !== null) {
+              document.getElementById("btnclick").play();
+            }       
+          });
+          canvas.addEventListener('mousemove', (e) => {
+            var circle = findelementhover(progressChart[e.currentTarget.attributes["id"].value].circles, e.currentTarget, e.clientX, e.clientY);
+            if (circle !== null) {
+              drawCircle(e.currentTarget.getContext("2d"), circle);
+            }
+          });
+          chartId++;
+      }
+    };
     var isIntersect = function (point, circle) {
       return Math.sqrt((point.x-circle.x) ** 2 + (point.y - circle.y) ** 2) < circle.r;
-    }
+    };
+    var findelementhover = function(circles, canvas, x, y) {
+      const pos = {
+        x: (x - canvas.getBoundingClientRect().left) * canvas.width/canvas.clientWidth,
+        y: (y - canvas.getBoundingClientRect().top) * canvas.height/canvas.clientHeight
+      };
+      for (circle of circles) {
+        if (isIntersect(pos, circle)) {
+          if(circle.hover != true) {
+            circle.hover = true;
+            return(circle);
+          }
+        } else {
+          if(circle.hover != false) {
+            circle.hover = false;
+            return(circle);
+          }
+        }
+      }
+      return (null);
+    };
+    var findelementintersect = function(circles, canvas, x, y) {
+      const pos = {
+        x: (x - canvas.getBoundingClientRect().left) * canvas.width/canvas.clientWidth,
+        y: (y - canvas.getBoundingClientRect().top) * canvas.height/canvas.clientHeight
+      };
+      for (c in circles) {
+        if (isIntersect(pos, circles[c])) {
+          return(c);
+        }
+      }
+      return (null);
+    };
     var draw = function(c, data, options) {
-      var W = canvas.width;
-      var H = canvas.height;
+      var W = c.width;
+      var H = c.height;
       var ctx = c.getContext("2d");
+      //make sure font available
       for (var i of [0,1,2]) {
         var centX = W/5 + W * i * 3/10;
         var r = W/7 * 0.7; 
@@ -96,19 +162,25 @@ app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService',
         ctx.strokeStyle = options.color[i];
         ctx.fill();
         ctx.stroke();
-        ctx.fillStyle = options.textcolor;
-        ctx.textAlign = "center";
-        var size = r/2;
-        var txt = "%" + data.value;
-        ctx.font = size + "px Yekan";
-        ctx.fillText(txt, centX, H/2 + size/3);        
       }
-    }
+      setTimeout( function() {
+        for (var i of [0,1,2]) {
+          var centX = W/5 + W * i * 3/10;
+          var r = W/7 * 0.7; 
+          ctx.fillStyle = options.textcolor;
+          ctx.textAlign = "center";
+          var size = r/2;
+          var txt = "%" + data.value;
+          ctx.font = size + "px WWDigital";
+          ctx.fillText(txt, centX, H/2 + size/3);        
+        }
+      }, 500);
+    };
+    //each chart have 3 outher circles
     var createCircles = function(c, data, options) {
       var W = c.width;
       var H = c.height;
       var ctx = c.getContext("2d");
-      //console.log(W, H);
       var circles = [];
       for (var i of [0,1,2]) {
         var centX = W/5 + W * i * 3/10;
@@ -118,7 +190,8 @@ app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService',
         circles[i] = {x: centX, y: H/2, r: r, startangle: 0, endangle: 2 * Math.PI, strokeStyle: options.color[i], lineWidth: 2, strokeStyleHover: options.fillcolor[i], hover:false};
       }
       return circles;
-    }
+    };
+    //draw a circle with hover feature
     var drawCircle = function(ctx, circle) {
         ctx.lineWidth = circle.lineWidth;
         if(circle.hover) {
@@ -130,69 +203,7 @@ app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService',
         ctx.arc(circle.x, circle.y, circle.r, circle.startangle, circle.endangle);
         ctx.stroke();
     }
-    while (document.getElementById("job" + chartId) !== null) {
-        var key = "job" + chartId;
-        var canvas  = document.getElementById(key);
-        var options = {
-                color: ["rgb(58,59,63)", "rgb(58,59,63)", "rgb(58,59,63)"],
-                fillcolor: ["rgb(70,70,140)", "rgb(100,60,80)", "rgb( 40,100,50)"],
-                textcolor: "#e6e6ff",
-            };
-        var data = {value: 50};
-        progressChart[key] = {canvas: canvas}; 
-        progressChart[key].circles = createCircles(canvas , data, options);
-        progressChart[key].circles.forEach(circle => {
-          drawCircle(canvas.getContext("2d"), circle);
-          
-        });
-        draw(canvas , data, options);
-        var findelementhover = function(circles, canvas, x, y) {
-          const pos = {
-            x: (x - canvas.getBoundingClientRect().left) * canvas.width/canvas.clientWidth,
-            y: (y - canvas.getBoundingClientRect().top) * canvas.height/canvas.clientHeight
-          };
-          for (circle of circles) {
-            if (isIntersect(pos, circle)) {
-              if(circle.hover != true) {
-                circle.hover = true;
-                return(circle);
-              }
-            } else {
-              if(circle.hover != false) {
-                circle.hover = false;
-                return(circle);
-              }
-            }
-          }
-          return (null);
-        };
-        var findelementintersect = function(circles, canvas, x, y) {
-          const pos = {
-            x: (x - canvas.getBoundingClientRect().left) * canvas.width/canvas.clientWidth,
-            y: (y - canvas.getBoundingClientRect().top) * canvas.height/canvas.clientHeight
-          };
-          for (c in circles) {
-            if (isIntersect(pos, circles[c])) {
-              return(c);
-            }
-          }
-          return (null);
-        };
-        canvas.addEventListener('click', (e) => {
-          var c = findelementintersect(progressChart[e.currentTarget.attributes["id"].value].circles, e.currentTarget, e.clientX, e.clientY);
-          if (c !== null) {
-            document.getElementById("btnclick").play();
-          }       
-        });
-        canvas.addEventListener('mousemove', (e) => {
-          var circle = findelementhover(progressChart[e.currentTarget.attributes["id"].value].circles, e.currentTarget, e.clientX, e.clientY);
-          if (circle !== null) {
-            drawCircle(e.currentTarget.getContext("2d"), circle);
-          }
-        });
-        chartId++;
-    }
-
+    /*
     var getConf = function (canvasId) {
         //config have changed, try redraw
         var conf = $scope.config[canvasId];
@@ -416,4 +427,5 @@ app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService',
         animation: false, //uncomment if you dont like animation, when i turn off anim hard referesh makes text to disappear
 
     };
+    */
 }]);

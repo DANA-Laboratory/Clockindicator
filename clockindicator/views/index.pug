@@ -1,13 +1,13 @@
 ﻿extends layout
 block content
   audio(id="btnclick", src="/sound/button.mp3" autostart="false")
-  div(ng-controller='ClockIndicatorInputCtrl', ng-init='load()')
+  div(ng-controller='ClockIndicatorInputCtrl', ng-init='load()',  ng-cloak)
     .text-center
         t(style="color:yellowgreen; font-family:WWDigital;") force load WWDigital
         t ............
         t(style="color:yellowgreen; font-family:Yekan;") force load Yekan
     .row
-      .d-flex.justify-content-start.flex-wrap(ng-controller='ClockIndicatorCtrl')
+      .d-flex.justify-content-start.flex-wrap(ng-controller='JobIndicatorCtrl', ng-init='init()')
         a.col-sm-6.col-md-3.text-center
           canvas.with-border.Bgray(id='job1', data-source='0', ng-click="clicked($event)", chart-data='data', chart-options='options', chart-dataset-override='datasetOverride')
         a.col-sm-6.col-md-3.text-center
