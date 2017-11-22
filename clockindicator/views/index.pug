@@ -1,5 +1,6 @@
 ﻿extends layout
 block content
+  audio(id="btnclick", src="/sound/button.mp3" autostart="false")
   div(ng-controller='ClockIndicatorInputCtrl', ng-init='load()')
     .text-center
         t(style="color:yellowgreen; font-family:WWDigital;") force load WWDigital

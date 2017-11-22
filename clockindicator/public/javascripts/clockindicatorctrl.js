@@ -143,31 +143,52 @@ app.controller("ClockIndicatorCtrl", ['$scope', 'clockIndicatorResourceService',
         progressChart[key].circles = createCircles(canvas , data, options);
         progressChart[key].circles.forEach(circle => {
           drawCircle(canvas.getContext("2d"), circle);
+          
         });
         draw(canvas , data, options);
-        canvas.addEventListener('mousemove', (e) => {
-          var canvas = e.currentTarget;
+        var findelementhover = function(circles, canvas, x, y) {
           const pos = {
-            x: (e.clientX - canvas.getBoundingClientRect().left) * canvas.width/canvas.clientWidth,
-            y: (e.clientY - canvas.getBoundingClientRect().top) * canvas.height/canvas.clientHeight
+            x: (x - canvas.getBoundingClientRect().left) * canvas.width/canvas.clientWidth,
+            y: (y - canvas.getBoundingClientRect().top) * canvas.height/canvas.clientHeight
           };
-          //console.log(pos);
-          circles = progressChart[e.currentTarget.attributes["id"].value].circles;
-          circles.forEach(circle => {
+          for (circle of circles) {
             if (isIntersect(pos, circle)) {
               if(circle.hover != true) {
                 circle.hover = true;
-                drawCircle(canvas.getContext("2d"), circle);
-                console.log("hover on");
+                return(circle);
               }
             } else {
               if(circle.hover != false) {
                 circle.hover = false;
-                drawCircle(canvas.getContext("2d"), circle);
-                console.log("hover off");
+                return(circle);
               }
             }
-          });   
+          }
+          return (null);
+        };
+        var findelementintersect = function(circles, canvas, x, y) {
+          const pos = {
+            x: (x - canvas.getBoundingClientRect().left) * canvas.width/canvas.clientWidth,
+            y: (y - canvas.getBoundingClientRect().top) * canvas.height/canvas.clientHeight
+          };
+          for (c in circles) {
+            if (isIntersect(pos, circles[c])) {
+              return(c);
+            }
+          }
+          return (null);
+        };
+        canvas.addEventListener('click', (e) => {
+          var c = findelementintersect(progressChart[e.currentTarget.attributes["id"].value].circles, e.currentTarget, e.clientX, e.clientY);
+          if (c !== null) {
+            document.getElementById("btnclick").play();
+          }       
+        });
+        canvas.addEventListener('mousemove', (e) => {
+          var circle = findelementhover(progressChart[e.currentTarget.attributes["id"].value].circles, e.currentTarget, e.clientX, e.clientY);
+          if (circle !== null) {
+            drawCircle(e.currentTarget.getContext("2d"), circle);
+          }
         });
         chartId++;
     }
